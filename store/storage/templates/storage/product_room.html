@@ -3,22 +3,27 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-    <div class="features">
-        <h1>{{ product.name }}</h1>
-        {% for image in product.productimage_set.all %}
-        <img src="{{ image.image.url }}" alt="Фото товара">
-        {% endfor %}
-        <h5>Цена: {{ product.price }}</h5>
-        <p>Дата издания: {{ product.date_release }}</p>
-        <p>Жанр: {{ product.tip }}</p>
-        <p>Описание: {{ product.description }}</p>
-        {% if average_rating %}
-        <p>Средний рейтинг: {{ average_rating|floatformat:1 }}</p>
-        {% endif %}
-    </div>
+    <div class="product-details">
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <div class="product-images">
+            {% for image in product.productimage_set.all %}
+            <img src="{{ image.image.url }}" alt="Фото товара">
+            {% endfor %}
+            </div>
+            <h3>Цена: {{ product.price }}</h3>
+            <p>Дата издания: {{ product.date_release }}</p>
+            <p>Жанр: {{ product.tip }}</p>
+            {% if average_rating %}
+            <p class="rating">Средний рейтинг: {{ average_rating|floatformat:1 }}</p>
+            {% endif %}
+        </div>
 
-    {% if user.is_authenticated %}
-        {% if not already_rated %}
+        <div class="product-description">
+            <p>Описание: {{ product.description }}</p>
+        </div>
+            {% if user.is_authenticated %}
+            {% if not already_rated %}
             <form method="POST" action="{% url 'rate_product' pk=product.id %}">
                 {% csrf_token %}
                 <label for="rating">Оценка:</label>
@@ -29,51 +34,25 @@
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select>
-                <button type="submit" class="filter-button">Оценить</button>
+                <button type="submit" class="rate-button">Оценить</button>
             </form>
-        {% else %}
+            {% else %}
             <p>Вы уже оценили этот товар.</p>
-        {% endif %}
+            {% endif %}
 
-        <div>
+           <div>
             <form id="form_add_to_cart" method="POST" action="{% url 'add_to_cart' pk=product.id %}">
                 {% csrf_token %}
                 <input type="number" name="quantity" id="quantity" class="form-control" min="1" value="1">
-                <div>
-        <button class="add-to-cart-button filter-button" data-product-id="{{ product.id }}">Добавить в корзину</button>
-        <div id="cart-message" style="display: none;">Товар добавлен в корзину</div>
-    </div>
-
-    <script>
-        document.querySelectorAll('.add-to-cart-button').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = this.getAttribute('data-product-id');
-
-                fetch('/add_to_cart/' + productId + '/')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showCartMessage();
-                        } else {
-                            alert('Произошла ошибка при добавлении товара в корзину.');
-                        }
-                    });
-            });
-        });
-
-        function showCartMessage() {
-            const cartMessage = document.getElementById('cart-message');
-            cartMessage.style.display = 'block';
-
-            setTimeout(function() {
-                cartMessage.style.display = 'none';
-            }, 3000);
-        }
-    </script>
-
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <div class="add-to-cart-buttons">
+                    <button type="submit" class="filter-button hidden" id="submit-form-button">Добавить в корзину</button>
+                    <div class="cart-info">Товар добавлен в корзину.</div>
+                </div>
             </form>
         </div>
-    {% else %}
-        <p>Чтобы оценить этот товар, пожалуйста, <a href="{% url 'login' %}">войдите</a>.</p>
-    {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

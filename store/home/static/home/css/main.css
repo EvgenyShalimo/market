@@ -411,17 +411,24 @@ input[type="password"] {
   color: #333;
 }
 
-
-#cart-message {
+.cart-info {
   display: none;
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px;
-  text-align: center;
-  position: absolute;
-  bottom: 450px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
+.add-to-cart-buttons {
+  display: flex;
+  align-items: center;
+}
+
+form.submitted .cart-info {
+  display: block;
+}
+
+form.submitted .filter-button {
+  display: none;
+}
+.features-class{
+
+}
