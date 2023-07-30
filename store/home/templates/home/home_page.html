@@ -10,17 +10,18 @@
         {% for product in latest_products %}
             <div class="product">
                 <h3>{{ product.name }}</h3>
+                 {% for image in product.productimage_set.all %}
+                    <img src="{{ image.image.url }}" alt="Фото товара">
+                {% endfor %}
                 <p>Цена: {{ product.price }}</p>
                 <p>Дата издания: {{ product.date_release }}</p>
                 {% if product.average_rating is not None %}
-                    <p>Средний рейтинг: {{ product.average_rating }}</p>
+                    <p>Средний рейтинг: {{ product.average_rating }}★</p>
                 {% else %}
                      <p>Товар еще не оценен</p>
                 {% endif %}
                 <p>Жанр: {{ product.tip }}</p>
-                {% for image in product.productimage_set.all %}
-                    <img src="{{ image.image.url }}" alt="Фото товара">
-                {% endfor %}
+
                 <a href="{% url 'product_room' product.id %}"><button class="filter-button">Подробнее</button></a>
             </div>
         {% endfor %}
